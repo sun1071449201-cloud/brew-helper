@@ -91,10 +91,10 @@ def main() -> int:
             continue
         if fname == "glossary_terms.json" and len(rows) < 100:
             fail("glossary_terms.json: expected >= 100 terms, got %d" % len(rows))
-        if fname == "sop_procedures.json" and len(rows) < 18:
-            fail("sop_procedures.json: expected >= 18 entries, got %d" % len(rows))
-        if fname == "fault_diagnosis.json" and len(rows) < 16:
-            fail("fault_diagnosis.json: expected >= 16 entries, got %d" % len(rows))
+        if fname == "sop_procedures.json" and len(rows) < 24:
+            fail("sop_procedures.json: expected >= 24 entries, got %d" % len(rows))
+        if fname == "fault_diagnosis.json" and len(rows) < 22:
+            fail("fault_diagnosis.json: expected >= 22 entries, got %d" % len(rows))
         if fname == "calc_formulas.json" and len(rows) < 8:
             fail("calc_formulas.json: expected >= 8 entries, got %d" % len(rows))
         if fname == "daily_facts.json" and len(rows) < 120:

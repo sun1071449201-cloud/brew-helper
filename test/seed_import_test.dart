@@ -36,9 +36,9 @@ void main() {
       return r.first.read<int>('c');
     }
 
-    expect(await count('sop_procedures'), 18);
+    expect(await count('sop_procedures'), 24);
     expect(await count('process_params'), 22);
-    expect(await count('fault_diagnosis'), 16);
+    expect(await count('fault_diagnosis'), 22);
     expect(await count('calc_formulas'), 8);
     expect(await count('glossary_terms'), 100);
     expect(await count('safety_rules'), 8);
