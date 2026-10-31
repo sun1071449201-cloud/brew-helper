@@ -93,7 +93,9 @@ jobs:
         run: dart run flutter_launcher_icons
 
       - name: Content checks
-        run: python3 tool/validate_book_content.py
+        run: |
+          python3 tool/validate_book_content.py
+          python3 tool/check_anchors.py
 
       - name: Analyze
         run: flutter analyze

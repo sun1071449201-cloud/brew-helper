@@ -10,7 +10,8 @@
         { "key": "ferm_sop.ch01", "title": "第一章 糖化与发酵：把糖变成酒", "file": "ferm_sop/ch01.md" },
         { "key": "ferm_sop.ch02", "title": "第二章 CIP 清洗与卫生：命根子工程", "file": "ferm_sop/ch02.md" },
         { "key": "ferm_sop.ch03", "title": "第三章 过滤与灌装：守住酒的最后尊严", "file": "ferm_sop/ch03.md" },
-        { "key": "ferm_sop.ch04", "title": "第四章 包装工序与出厂把关", "file": "ferm_sop/ch04.md" }
+        { "key": "ferm_sop.ch04", "title": "第四章 包装工序与出厂把关", "file": "ferm_sop/ch04.md" },
+        { "key": "ferm_sop.ch05", "title": "第五章 六个补充 SOP：把操作缝补完整", "file": "ferm_sop/ch05.md" }
       ]
     },
     {
@@ -23,7 +24,8 @@
         { "key": "ferm_fault.ch01", "title": "第一章 发酵异常：温度、降糖与风味", "file": "ferm_fault/ch01.md" },
         { "key": "ferm_fault.ch02", "title": "第二章 CIP 与过滤灌装异常", "file": "ferm_fault/ch02.md" },
         { "key": "ferm_fault.ch03", "title": "第三章 风味与质量异常：喝出来的线索", "file": "ferm_fault/ch03.md" },
-        { "key": "ferm_fault.ch04", "title": "第四章 设备与仪表异常：先怀疑尺子", "file": "ferm_fault/ch04.md" }
+        { "key": "ferm_fault.ch04", "title": "第四章 设备与仪表异常：先怀疑尺子", "file": "ferm_fault/ch04.md" },
+        { "key": "ferm_fault.ch05", "title": "第五章 六个新故障的排查卡", "file": "ferm_fault/ch05.md" }
       ]
     },
     {

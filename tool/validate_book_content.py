@@ -122,8 +122,8 @@ def main() -> int:
             chapters = bl.get("chapters", [])
             print("book_learning: %d chapters, %d quiz items" %
                   (len(chapters), sum(len(c.get("quiz", [])) for c in chapters)))
-            if len(chapters) < 14:
-                fail("book_learning.json: expected >= 14 chapters, got %d" % len(chapters))
+            if len(chapters) < 16:
+                fail("book_learning.json: expected >= 16 chapters, got %d" % len(chapters))
             # 章节键必须存在于 manifest
             valid_keys = set(seen_keys)
             for c in chapters:
