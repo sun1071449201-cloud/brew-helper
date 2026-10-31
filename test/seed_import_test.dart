@@ -40,9 +40,9 @@ void main() {
     expect(await count('process_params'), 22);
     expect(await count('fault_diagnosis'), 22);
     expect(await count('calc_formulas'), 8);
-    expect(await count('glossary_terms'), 100);
+    expect(await count('glossary_terms'), 150);
     expect(await count('safety_rules'), 8);
-    expect(await count('daily_facts'), 120);
+    expect(await count('daily_facts'), 180);
     expect(await count('app_settings'), 2);
   });
 

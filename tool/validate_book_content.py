@@ -89,16 +89,16 @@ def main() -> int:
         if not isinstance(rows, list):
             fail("%s: top-level must be a list" % fname)
             continue
-        if fname == "glossary_terms.json" and len(rows) < 100:
-            fail("glossary_terms.json: expected >= 100 terms, got %d" % len(rows))
+        if fname == "glossary_terms.json" and len(rows) < 150:
+            fail("glossary_terms.json: expected >= 150 terms, got %d" % len(rows))
         if fname == "sop_procedures.json" and len(rows) < 24:
             fail("sop_procedures.json: expected >= 24 entries, got %d" % len(rows))
         if fname == "fault_diagnosis.json" and len(rows) < 22:
             fail("fault_diagnosis.json: expected >= 22 entries, got %d" % len(rows))
         if fname == "calc_formulas.json" and len(rows) < 8:
             fail("calc_formulas.json: expected >= 8 entries, got %d" % len(rows))
-        if fname == "daily_facts.json" and len(rows) < 120:
-            fail("daily_facts.json: expected >= 120 entries, got %d" % len(rows))
+        if fname == "daily_facts.json" and len(rows) < 180:
+            fail("daily_facts.json: expected >= 180 entries, got %d" % len(rows))
         if fname == "safety_rules.json" and len(rows) < 8:
             fail("safety_rules.json: expected >= 8 entries, got %d" % len(rows))
         for i, row in enumerate(rows):
