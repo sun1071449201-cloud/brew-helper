@@ -1,0 +1,136 @@
+name: Build Android APK
+
+# Cloud auto-build: pushed to main -> analyze + test + release APK.
+# android/ is intentionally not committed: CI runs `flutter create .` to
+# generate the harness (avoids local template version drift).
+#
+# Signing:
+# - If ANDROID_KEYSTORE_BASE64 secret exists, use it (stable signature,
+#   required for overwrite-install upgrades).
+# - Otherwise generate an ephemeral keystore and export it via the
+#   `keystore-onetime` artifact. After v1, upload that keystore to repo
+#   secrets (ANDROID_KEYSTORE_BASE64 / ANDROID_KEYSTORE_PASSWORD /
+#   ANDROID_KEY_ALIAS / ANDROID_KEY_PASSWORD) so later builds keep the
+#   same signature.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build-apk:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: stable
+          cache: true
+
+      - name: Generate Android harness
+        run: flutter create . --project-name brew_helper --org com.sunliangyu --platforms android
+
+      - name: Upgrade Kotlin Gradle plugin (template pins 1.7.x, deps need 1.9)
+        run: |
+          if [ -f android/settings.gradle ]; then
+            sed -i 's/id "org.jetbrains.kotlin.android" version "[^"]*"/id "org.jetbrains.kotlin.android" version "1.9.24"/g' android/settings.gradle || true
+          fi
+          if [ -f android/build.gradle ]; then
+            sed -i "s/ext.kotlin_version = '[^']*'/ext.kotlin_version = '1.9.24'/g" android/build.gradle || true
+          fi
+
+      - name: Configure stable release signing
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          if [ -n "$ANDROID_KEYSTORE_BASE64" ]; then
+            echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/app/release.keystore
+            cat > android/key.properties <<EOF
+          storePassword=$ANDROID_KEYSTORE_PASSWORD
+          keyPassword=$ANDROID_KEY_PASSWORD
+          keyAlias=$ANDROID_KEY_ALIAS
+          storeFile=release.keystore
+          EOF
+          else
+            echo "No keystore secrets: generating an ephemeral keystore for this build."
+            keytool -genkeypair -v -keystore android/app/release.keystore -storetype PKCS12 \
+              -alias brew_helper -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass brewhelper2026 -keypass brewhelper2026 \
+              -dname "CN=Brew Helper"
+            printf 'storePassword=brewhelper2026\nkeyPassword=brewhelper2026\nkeyAlias=brew_helper\nstoreFile=release.keystore\n' > android/key.properties
+            mkdir -p artifact_keystore
+            base64 -w0 android/app/release.keystore > artifact_keystore/keystore.b64
+            printf 'storePassword=brewhelper2026\nkeyPassword=brewhelper2026\nkeyAlias=brew_helper\n' > artifact_keystore/SECRETS_TO_UPLOAD.txt
+          fi
+          python3 tool/configure_android_release.py
+
+      - name: Remove template widget test
+        run: rm -f test/widget_test.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate Drift code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Generate launcher icons
+        run: dart run flutter_launcher_icons
+
+      - name: Content checks
+        run: python3 tool/validate_book_content.py
+
+      - name: Analyze
+        run: flutter analyze
+
+      - name: Run tests
+        run: flutter test
+
+      - name: Build release APKs
+        run: flutter build apk --release --split-per-abi
+
+      - name: Upload APK + lock artifact
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: brew-helper-release-apks
+          retention-days: 3
+          path: |
+            build/app/outputs/flutter-apk/*-release.apk
+            pubspec.lock
+
+      - name: Upload one-time keystore (only when secrets absent)
+        if: ${{ hashFiles('artifact_keystore/keystore.b64') != '' }}
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: keystore-onetime
+          retention-days: 3
+          path: artifact_keystore/
+
+      - name: Push APKs to apk-builds branch
+        if: success()
+        continue-on-error: true
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git checkout -q -B apk-builds
+          git add -f build/app/outputs/flutter-apk/*-release.apk
+          git add -f pubspec.lock
+          git commit -q -m "APK build ${GITHUB_SHA::7}"
+          git push -q -f origin apk-builds

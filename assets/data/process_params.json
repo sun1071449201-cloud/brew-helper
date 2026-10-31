@@ -1,0 +1,222 @@
+[
+  {
+    "param_id": "pp_mash_strike",
+    "process": "糖化",
+    "name": "投料水温",
+    "value_range": "经验上比目标醅温高 3~8 °C（随水粮比变化）",
+    "note": "水粮比越小（醅越稠），需要的水温越高；冬天粮温低要多留余量",
+    "sort": 1,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_mash_ratio",
+    "process": "糖化",
+    "name": "水粮比",
+    "value_range": "经验值约 2.5~4.0 L/kg",
+    "note": "太稠搅拌难、太稀酶接触差，以本厂工艺卡为准",
+    "sort": 2,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_mash_ph",
+    "process": "糖化",
+    "name": "糖化醅 pH",
+    "value_range": "经验范围约 5.2~5.6",
+    "note": "pH 偏离会同时影响酶活和过滤，化验超标先查调酸记录",
+    "sort": 3,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_mash_iodine",
+    "process": "糖化",
+    "name": "碘检合格判据",
+    "value_range": "碘液反应不变色（无淀粉残留）",
+    "note": "取样要先冷却到室温再滴碘，热醅直接滴会误判",
+    "sort": 4,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_wort_boil_time",
+    "process": "糖化",
+    "name": "麦汁煮沸时间",
+    "value_range": "以工艺卡为准（常规 60~90 分钟量级）",
+    "note": "煮沸不足 DMS 高、蛋白凝聚差；过长色度上脸",
+    "sort": 5,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_pitch_rate",
+    "process": "发酵",
+    "name": "酵母接种量",
+    "value_range": "以本厂酵母管理规程为准",
+    "note": "接种量按活细胞数计，不是按泥量；扩培报告随罐走",
+    "sort": 6,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_yeast_viability",
+    "process": "发酵",
+    "name": "酵母活率下限",
+    "value_range": "经验线约 95%（低于不接种）",
+    "note": "活率低硬接种等于把降糖停滞和双乙酰一起买回家",
+    "sort": 7,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_ferm_temp",
+    "process": "发酵",
+    "name": "主发酵温度",
+    "value_range": "以工艺卡为准（常见 8~14 °C 量级，酒种而异）",
+    "note": "控温点波动 ±0.5 °C 以内最理想；骤升骤降都伤酵母",
+    "sort": 8,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_ferm_o2",
+    "process": "发酵",
+    "name": "麦汁充氧量",
+    "value_range": "以工艺卡为准（常见 8~12 mg/L 量级）",
+    "note": "充氧不足酵母增殖差、降糖慢；过量氧化风险，按卡执行",
+    "sort": 9,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_vdk_line",
+    "process": "发酵",
+    "name": "VDK（连二酮）合格线",
+    "value_range": "以本厂质量标准为准",
+    "note": "前体折算与成品判定线不同，送检单上要看清栏目",
+    "sort": 10,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_cool_down_rate",
+    "process": "发酵",
+    "name": "降温速率",
+    "value_range": "经验值每天 1~3 °C 量级",
+    "note": "降温过快酵母提前休眠，双乙酰还原不彻底就反弹",
+    "sort": 11,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_cip_caustic_pct",
+    "process": "CIP",
+    "name": "碱洗浓度",
+    "value_range": "以本厂 CIP 工艺卡为准（常见 1~3 % 量级）",
+    "note": "浓度按碱洗液实测计；配好必须复测，凭泵设置不保险",
+    "sort": 12,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_cip_caustic_temp",
+    "process": "CIP",
+    "name": "碱洗温度",
+    "value_range": "以本厂 CIP 工艺卡为准（常见 60~80 °C 量级）",
+    "note": "温度每差 10 °C，去垢能力差一大截；温度计要定期校",
+    "sort": 13,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_cip_time",
+    "process": "CIP",
+    "name": "碱洗循环时间",
+    "value_range": "以工艺卡为准（常见 20~40 分钟量级）",
+    "note": "断流要重新计时；时间不足等于白洗",
+    "sort": 14,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_cip_rinse_ph",
+    "process": "CIP",
+    "name": "终洗水 pH 合格判据",
+    "value_range": "冲洗水接近中性（与水源本底一致）",
+    "note": "取冲洗水样实测，目测清≠没残碱",
+    "sort": 15,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_filter_dp",
+    "process": "过滤",
+    "name": "过滤进出口压差上限",
+    "value_range": "以本厂过滤工艺卡为准",
+    "note": "压差到上限立即换洗，硬顶会把滤层压穿、浊度失控",
+    "sort": 16,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_filter_temp",
+    "process": "过滤",
+    "name": "过滤酒温",
+    "value_range": "以工艺卡为准（常见接近 0 °C 量级）",
+    "note": "温度波动引起析出与冷浑浊，过滤前先把酒温稳住",
+    "sort": 17,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_turbidity_line",
+    "process": "过滤",
+    "name": "过滤出口浊度内控线",
+    "value_range": "以本厂质量标准为准",
+    "note": "浊度仪定期校零；持续回流降不下来要停机查",
+    "sort": 18,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_filler_temp",
+    "process": "灌装",
+    "name": "灌装酒温",
+    "value_range": "以本厂灌装工艺卡为准（常见 0~4 °C 量级）",
+    "note": "酒温高 1~2 °C 起泡损耗明显上升；换罐先看温度再开阀",
+    "sort": 19,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_filler_bp",
+    "process": "灌装",
+    "name": "灌装背压",
+    "value_range": "以本厂灌装工艺卡为准",
+    "note": "背压气必须用 CO2；用压缩空气等于主动给酒充氧",
+    "sort": 20,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_pu_target",
+    "process": "包装",
+    "name": "杀菌 PU 值",
+    "value_range": "以本厂包装标准为准（行业常见目标 10~30 PU 区间内选取）",
+    "note": "PU 不足微生物风险，PU 过高酒体老化；看记录曲线不看单点",
+    "sort": 21,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  },
+  {
+    "param_id": "pp_do_bright",
+    "process": "过滤",
+    "name": "清酒溶解氧内控",
+    "value_range": "以本厂质量标准为准",
+    "note": "DO 是保质期的隐形杀手；管路接头、脱氧水都要纳入排查",
+    "sort": 22,
+    "verified": false,
+    "source_ref": "以本厂 SOP 为准"
+  }
+]

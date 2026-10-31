@@ -1,0 +1,66 @@
+{
+  "books": [
+    {
+      "book_id": "ferm_sop",
+      "title": "酿造工艺 SOP 手册",
+      "subtitle": "各工序 SOP · 判定标准 · 安全规范（老师傅带徒弟版）",
+      "accent": "primary",
+      "chapters": [
+        { "key": "ferm_sop.ch00", "title": "导读：怎么用这本手册", "file": "ferm_sop/ch00.md" },
+        { "key": "ferm_sop.ch01", "title": "第一章 糖化与发酵：把糖变成酒", "file": "ferm_sop/ch01.md" },
+        { "key": "ferm_sop.ch02", "title": "第二章 CIP 清洗与卫生：命根子工程", "file": "ferm_sop/ch02.md" },
+        { "key": "ferm_sop.ch03", "title": "第三章 过滤与灌装：守住酒的最后尊严", "file": "ferm_sop/ch03.md" },
+        { "key": "ferm_sop.ch04", "title": "第四章 包装工序与出厂把关", "file": "ferm_sop/ch04.md" }
+      ]
+    },
+    {
+      "book_id": "ferm_fault",
+      "title": "酿造异常排查手册",
+      "subtitle": "按症状查根因 · 排查步骤 · 对策（现场视角）",
+      "accent": "secondary",
+      "chapters": [
+        { "key": "ferm_fault.ch00", "title": "导读：排查三步法", "file": "ferm_fault/ch00.md" },
+        { "key": "ferm_fault.ch01", "title": "第一章 发酵异常：温度、降糖与风味", "file": "ferm_fault/ch01.md" },
+        { "key": "ferm_fault.ch02", "title": "第二章 CIP 与过滤灌装异常", "file": "ferm_fault/ch02.md" },
+        { "key": "ferm_fault.ch03", "title": "第三章 风味与质量异常：喝出来的线索", "file": "ferm_fault/ch03.md" },
+        { "key": "ferm_fault.ch04", "title": "第四章 设备与仪表异常：先怀疑尺子", "file": "ferm_fault/ch04.md" }
+      ]
+    },
+    {
+      "book_id": "ferm_safety",
+      "title": "酿造安全红线手册",
+      "subtitle": "CO2 · 碱液 · 密闭空间 · 机械热烫（拿事故换的红线）",
+      "accent": "tertiary",
+      "chapters": [
+        { "key": "ferm_safety.ch00", "title": "导读：安全手册怎么用", "file": "ferm_safety/ch00.md" },
+        { "key": "ferm_safety.ch01", "title": "第一章 CO2 与密闭空间", "file": "ferm_safety/ch01.md" },
+        { "key": "ferm_safety.ch02", "title": "第二章 化学品：碱液、酸液、氨", "file": "ferm_safety/ch02.md" },
+        { "key": "ferm_safety.ch03", "title": "第三章 机械、热与玻璃", "file": "ferm_safety/ch03.md" }
+      ]
+    },
+    {
+      "book_id": "ferm_calc",
+      "title": "酿造术语与计算",
+      "subtitle": "术语 · 公式 · 单位换算 · 计算实例（口袋工具书）",
+      "accent": "primary",
+      "chapters": [
+        { "key": "ferm_calc.ch00", "title": "导读：计算是兜底，工艺卡是根本", "file": "ferm_calc/ch00.md" },
+        { "key": "ferm_calc.ch01", "title": "第一章 比重、浓度与酒精度", "file": "ferm_calc/ch01.md" },
+        { "key": "ferm_calc.ch02", "title": "第二章 苦度、碳酸化与现场换算", "file": "ferm_calc/ch02.md" },
+        { "key": "ferm_calc.ch03", "title": "第三章 工艺计算实例课", "file": "ferm_calc/ch03.md" }
+      ]
+    },
+    {
+      "book_id": "ferm_newbie",
+      "title": "酿造新人上岗手册",
+      "subtitle": "第一周怎么活 · 交接与记录 · 跟班学习法",
+      "accent": "secondary",
+      "chapters": [
+        { "key": "ferm_newbie.ch00", "title": "导读：写给第一周的你", "file": "ferm_newbie/ch00.md" },
+        { "key": "ferm_newbie.ch01", "title": "第一章 认识车间：从一粒麦到一瓶酒", "file": "ferm_newbie/ch01.md" },
+        { "key": "ferm_newbie.ch02", "title": "第二章 交接班与记录纪律", "file": "ferm_newbie/ch02.md" },
+        { "key": "ferm_newbie.ch03", "title": "第三章 跟班学习法：怎么问、怎么记、怎么复盘", "file": "ferm_newbie/ch03.md" }
+      ]
+    }
+  ]
+}
