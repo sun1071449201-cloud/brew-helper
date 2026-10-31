@@ -15,21 +15,51 @@ class _CleanerMixPageState extends State<CleanerMixPage> {
   final _targetPct = TextEditingController(text: '2');
   final _finalLiters = TextEditingController(text: '100');
   final _stockPct = TextEditingController(text: '50');
+  // 质量稀释（糖浆/碱液通用）
+  final _stockKg = TextEditingController(text: '100');
+  final _stockPct2 = TextEditingController(text: '50');
+  final _targetPct2 = TextEditingController(text: '10');
+  final _addKg = TextEditingController(text: '0');
 
   @override
   void initState() {
     super.initState();
-    for (final c in [_targetPct, _finalLiters, _stockPct]) {
+    for (final c in [_targetPct, _finalLiters, _stockPct, _stockKg, _stockPct2, _targetPct2]) {
       c.addListener(() => setState(() {}));
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_targetPct, _finalLiters, _stockPct]) {
+    for (final c in [_targetPct, _finalLiters, _stockPct, _stockKg, _stockPct2, _targetPct2]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+  /// 质量稀释：加水量随输入联动；再给一个"手头只有 X kg 水"的反算混合浓度。
+  Map<String, String> _diluteResult() {
+    final stockKg = double.tryParse(_stockKg.text.trim());
+    final stockPct = double.tryParse(_stockPct2.text.trim());
+    final targetPct = double.tryParse(_targetPct2.text.trim());
+    if (stockKg == null || stockPct == null || targetPct == null ||
+        stockKg < 0 || stockPct <= 0 || targetPct <= 0 || targetPct > stockPct) {
+      return {'填入有效参数': '目标浓度要低于原液浓度'};
+    }
+    final water = QuickTools.diluteWaterKg(
+        stockKg: stockKg, stockPct: stockPct, targetPct: targetPct);
+    final out = <String, String>{
+      '需加水': '${water.toStringAsFixed(1)} kg（约 L）',
+      '稀释后总量': '${(stockKg + water).toStringAsFixed(1)} kg',
+    };
+    final addKg = double.tryParse(_addKg.text.trim());
+    if (addKg != null && addKg > 0) {
+      final mixed = QuickTools.mixPct(
+          m1: stockKg, c1: stockPct, m2: addKg, c2: 0);
+      out['实际加 ${addKg.toStringAsFixed(1)} kg 水后的浓度'] =
+          '${mixed.toStringAsFixed(2)} %';
+    }
+    return out;
   }
 
   Map<String, String>? _compute() {
@@ -76,6 +106,21 @@ class _CleanerMixPageState extends State<CleanerMixPage> {
               rows: result,
               note: '投加量按水的密度 1 kg/L 近似；浓度/温度修正与安全限值以本厂 CIP 工艺卡和药剂 MSDS 为准。',
             ),
+          const SizedBox(height: 12),
+          Text('质量稀释（糖浆/碱液通用，按 kg 计）',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          CalcField(_stockKg, '原液量（kg）', '如 100'),
+          CalcField(_stockPct2, '原液浓度（%）', '如 50'),
+          CalcField(_targetPct2, '目标浓度（%）', '如 10'),
+          CalcField(_addKg, '（可选）实际加水量（kg）→ 反算混合浓度', '如 0'),
+          const SizedBox(height: 4),
+          CalcResult(
+            rows: _diluteResult(),
+            note: '质量分数口径：加水量 = 原液量 × (C1/C2 − 1)。分次加水每次搅匀复测，一次到位必翻车。',
+          ),
           const SizedBox(height: 12),
           Card(
             color: Theme.of(context)

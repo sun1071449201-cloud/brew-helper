@@ -17,21 +17,48 @@ class _IbuPageState extends State<IbuPage> {
   final _liters = TextEditingController(text: '100');
   final _sg = TextEditingController(text: '1.050');
   final _minutes = TextEditingController(text: '60');
+  // 分次添加汇总（第 1~3 次）
+  final _aa2 = TextEditingController(text: '8');
+  final _grams2 = TextEditingController(text: '50');
+  final _minutes2 = TextEditingController(text: '10');
 
   @override
   void initState() {
     super.initState();
-    for (final c in [_aa, _grams, _liters, _sg, _minutes]) {
+    for (final c in [_aa, _grams, _liters, _sg, _minutes, _aa2, _grams2, _minutes2]) {
       c.addListener(() => setState(() {}));
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_aa, _grams, _liters, _sg, _minutes]) {
+    for (final c in [_aa, _grams, _liters, _sg, _minutes, _aa2, _grams2, _minutes2]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+  /// 分次添加汇总：两次添加分别算再相加（第 3 行留空即按两次计）。
+  Map<String, String>? _totalResult() {
+    final liters = double.tryParse(_liters.text.trim());
+    final sg = double.tryParse(_sg.text.trim());
+    final aa1 = double.tryParse(_aa.text.trim());
+    final g1 = double.tryParse(_grams.text.trim());
+    final m1 = double.tryParse(_minutes.text.trim());
+    final aa2 = double.tryParse(_aa2.text.trim());
+    final g2 = double.tryParse(_grams2.text.trim());
+    final m2 = double.tryParse(_minutes2.text.trim());
+    if (liters == null || sg == null || aa1 == null || g1 == null || m1 == null) {
+      return null;
+    }
+    final adds = <({double aaPercent, double grams, double minutes})>[
+      (aaPercent: aa1, grams: g1, minutes: m1),
+    ];
+    if (aa2 != null && g2 != null && m2 != null) {
+      adds.add((aaPercent: aa2, grams: g2, minutes: m2));
+    }
+    final total = QuickTools.ibuTotal(liters: liters, sg: sg, additions: adds);
+    return {'分次合计 IBU': total.toStringAsFixed(1), '添加次数': '${adds.length} 次'};
   }
 
   Map<String, String>? _compute() {
@@ -87,6 +114,21 @@ class _IbuPageState extends State<IbuPage> {
             CalcResult(
               rows: result,
               note: 'Tinseth 法为行业常用估算；IBU 无现场快检手段，配方核对以化验室 bitterness 实测为准。',
+            ),
+          const SizedBox(height: 12),
+          Text('分次添加汇总（第 2 次可选）',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          CalcField(_aa2, '第 2 次酒花 AA（%）', '如 8（留空则按单次计）'),
+          CalcField(_grams2, '第 2 次酒花用量（g）', '如 50'),
+          CalcField(_minutes2, '第 2 次煮沸时间（分钟）', '如 10'),
+          const SizedBox(height: 4),
+          if (_totalResult() != null)
+            CalcResult(
+              rows: _totalResult()!,
+              note: '每次添加的利用率差别很大——必须分别算再相加，不能把克数相加套一次公式。',
             ),
           const SizedBox(height: 12),
           Text(

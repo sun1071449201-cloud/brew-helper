@@ -40,23 +40,40 @@ class _WaterIonsPageState extends State<WaterIonsPage> {
   int _ionIndex = 0;
   final _targetPpm = TextEditingController(text: '50');
   final _liters2 = TextEditingController(text: '100');
+  final _caPpm = TextEditingController(text: '40');
+  final _mgPpm = TextEditingController(text: '10');
 
   _Salt get _salt => _salts[_saltIndex];
 
   @override
   void initState() {
     super.initState();
-    for (final c in [_grams, _liters, _targetPpm, _liters2]) {
+    for (final c in [_grams, _liters, _targetPpm, _liters2, _caPpm, _mgPpm]) {
       c.addListener(() => setState(() {}));
     }
   }
 
   @override
   void dispose() {
-    for (final c in [_grams, _liters, _targetPpm, _liters2]) {
+    for (final c in [_grams, _liters, _targetPpm, _liters2, _caPpm, _mgPpm]) {
       c.dispose();
     }
     super.dispose();
+  }
+
+  Map<String, String> _hardnessResult() {
+    final ca = double.tryParse(_caPpm.text.trim());
+    final mg = double.tryParse(_mgPpm.text.trim());
+    if (ca == null || mg == null || ca < 0 || mg < 0) {
+      return {'填入有效参数': '钙镁浓度 ≥ 0'};
+    }
+    final caDh = QuickTools.calciumToDh(ca);
+    final mgDh = QuickTools.magnesiumToDh(mg);
+    return {
+      '钙硬度': '${caDh.toStringAsFixed(2)} °dH',
+      '镁硬度': '${mgDh.toStringAsFixed(2)} °dH',
+      '总硬度': '${QuickTools.totalHardnessDh(caPpm: ca, mgPpm: mg).toStringAsFixed(2)} °dH',
+    };
   }
 
   Map<String, String> _forwardResult() {
@@ -147,6 +164,20 @@ class _WaterIonsPageState extends State<WaterIonsPage> {
           CalcResult(
             rows: reverse,
             note: '水质调整是全局账：多种盐会互相贡献离子，先定钙再配氯硫，一次只动一个变量并送检复核。',
+          ),
+          const Divider(height: 24),
+          Text('③ 硬度换算（°dH 德国度）',
+              style: Theme.of(context)
+                  .textTheme
+                  .titleSmall
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 4),
+          CalcField(_caPpm, '钙 Ca²⁺（ppm）', '如 40'),
+          CalcField(_mgPpm, '镁 Mg²⁺（ppm）', '如 10'),
+          const SizedBox(height: 4),
+          CalcResult(
+            rows: _hardnessResult(),
+            note: '1 °dH = 17.848 mg/L CaCO3 当量；钙系数 2.4972、镁系数 4.1176 均由摩尔质量换算。原水硬度以化验单为准。',
           ),
           const SizedBox(height: 8),
           Text(

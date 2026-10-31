@@ -184,6 +184,75 @@ void main() {
     });
   });
 
+  group('分次酒花 IBU 汇总', () {
+    test('两次添加（60min + 10min）分别算再相加 = 11.86', () {
+      // 第 1 次：AA 12%×30g，100L，1.048，60min
+      //   bigness = 1.65×0.000125^0.048 = 1.65×0.649613 = 1.071862
+      //   time = (1-e^-2.4)/4.15 = 0.2191053 → util = 0.234852
+      //   mg/L = 36 → IBU_A = 8.4547
+      // 第 2 次：AA 8%×50g，10min
+      //   time = (1-e^-0.4)/4.15 = 0.0794410 → util = 0.0851490
+      //   mg/L = 40 → IBU_B = 3.4060
+      // 合计 ≈ 11.86
+      final total = QuickTools.ibuTotal(
+        liters: 100,
+        sg: 1.048,
+        additions: [
+          (aaPercent: 12, grams: 30, minutes: 60),
+          (aaPercent: 8, grams: 50, minutes: 10),
+        ],
+      );
+      expect(total, closeTo(11.86, 0.05));
+    });
+
+    test('单次添加时 ibuTotal 与 ibuTinseth 一致', () {
+      final one = QuickTools.ibuTinseth(
+          aaPercent: 10, grams: 30, liters: 20, sg: 1.050, minutes: 60);
+      final total = QuickTools.ibuTotal(liters: 20, sg: 1.050, additions: [
+        (aaPercent: 10, grams: 30, minutes: 60),
+      ]);
+      expect(total, closeTo(one, 0.0001));
+    });
+  });
+
+  group('水硬度 °dH', () {
+    test('Ca 40 ppm → 5.60 °dH', () {
+      // 40 × 2.4972 / 17.848 = 5.5962
+      expect(QuickTools.calciumToDh(40), closeTo(5.60, 0.01));
+    });
+
+    test('Mg 10 ppm → 2.31 °dH', () {
+      // 10 × 4.1176 / 17.848 = 2.3070
+      expect(QuickTools.magnesiumToDh(10), closeTo(2.31, 0.01));
+    });
+
+    test('总硬度 = 钙 + 镁', () {
+      // 5.5962 + 2.3070 = 7.9032
+      expect(
+        QuickTools.totalHardnessDh(caPpm: 40, mgPpm: 10),
+        closeTo(7.90, 0.01),
+      );
+    });
+  });
+
+  group('糖浆稀释（质量浓度）', () {
+    test('100 kg 50% 稀到 10%：加水 2400 kg', () {
+      // 100 × (50/10 − 1) = 2400
+      expect(
+        QuickTools.diluteWaterKg(stockKg: 100, stockPct: 50, targetPct: 10),
+        closeTo(2400, 0.01),
+      );
+    });
+
+    test('混合浓度：100kg 50% + 400kg 水沟兑 → 10%', () {
+      // (100×50 + 400×0) / 500 = 10
+      expect(
+        QuickTools.mixPct(m1: 100, c1: 50, m2: 400, c2: 0),
+        closeTo(10, 0.001),
+      );
+    });
+  });
+
   group('CO2 亨利定律', () {
     test('4°C 0.8 bar 表压 ≈ 2.51 vol', () {
       // k_H(4°C) = 0.034×exp(2400×(1/277.15-1/298.15)) = 0.034×1.84009 = 0.062563

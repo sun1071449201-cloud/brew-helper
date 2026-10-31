@@ -77,6 +77,71 @@ class QuickTools {
     return mgPerL * tinsethUtilization(sg, minutes);
   }
 
+  /// 分次添加 IBU 汇总：每次添加的利用率差别很大，必须分别算再相加。
+  /// additions 用 Record 列表 (aaPercent, grams, minutes)。
+  static double ibuTotal({
+    required double liters,
+    required double sg,
+    required List<({double aaPercent, double grams, double minutes})>
+        additions,
+  }) {
+    if (liters <= 0) return 0;
+    var sum = 0.0;
+    for (final a in additions) {
+      sum += ibuTinseth(
+        aaPercent: a.aaPercent,
+        grams: a.grams,
+        liters: liters,
+        sg: sg,
+        minutes: a.minutes,
+      );
+    }
+    return sum;
+  }
+
+  // ---------- 水硬度（°dH 德国度） ----------
+
+  /// 1 °dH = 17.848 mg/L CaCO3 当量（定义换算）。
+  static const _mgPerLiterPerDh = 17.848;
+
+  /// Ca²⁺ → CaCO3 当量系数 = 100.09 / 40.078 = 2.4972。
+  static double calciumToDh(double caPpm) =>
+      caPpm * 2.4972 / _mgPerLiterPerDh;
+
+  /// Mg²⁺ → CaCO3 当量系数 = 100.09 / 24.305 = 4.1176。
+  static double magnesiumToDh(double mgPpm) =>
+      mgPpm * 4.1176 / _mgPerLiterPerDh;
+
+  /// 总硬度 = 钙硬度 + 镁硬度（°dH）。
+  static double totalHardnessDh(
+          {required double caPpm, required double mgPpm}) =>
+      calciumToDh(caPpm) + magnesiumToDh(mgPpm);
+
+  // ---------- 糖浆稀释（质量浓度） ----------
+
+  /// 质量稀释加水量 kg：加到目标浓度需要补的水
+  /// = 原液质量 × (C1/C2 − 1)（质量分数口径）。
+  static double diluteWaterKg({
+    required double stockKg,
+    required double stockPct,
+    required double targetPct,
+  }) {
+    if (targetPct <= 0) return 0;
+    return stockKg * (stockPct / targetPct - 1);
+  }
+
+  /// 两物料混合后质量浓度：% = (m1×C1 + m2×C2) / (m1+m2)。
+  static double mixPct({
+    required double m1,
+    required double c1,
+    required double m2,
+    required double c2,
+  }) {
+    final total = m1 + m2;
+    if (total <= 0) return 0;
+    return (m1 * c1 + m2 * c2) / total;
+  }
+
   // ---------- 清洗剂配比 ----------
 
   /// 直接投加：投加量 kg ≈ 目标浓度% / 100 × 配液升数（水的密度按 1 kg/L 计）。
