@@ -55,7 +55,7 @@ void main() {
     expect(meta.length, 1);
 
     final sop = await db.customSelect('SELECT COUNT(*) AS c FROM sop_procedures').get();
-    expect(sop.first.read<int>('c'), 18);
+    expect(sop.first.read<int>('c'), 24);
   });
 
   test('FTS：中文子串检索命中（≥3 字符走 trigram）', () async {
@@ -155,7 +155,7 @@ void main() {
     // 新种子生效
     final sopCount =
         await db.customSelect('SELECT COUNT(*) AS c FROM sop_procedures').get();
-    expect(sopCount.first.read<int>('c'), 19);
+    expect(sopCount.first.read<int>('c'), 25);
   });
 }
 
