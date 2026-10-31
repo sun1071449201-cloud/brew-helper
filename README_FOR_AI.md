@@ -1,8 +1,9 @@
 # README_FOR_AI — 项目交接文档（写给下一个接手的 AI / 开发者）
 
 > 啤酒酿造车间一线操作员辅助学习 App（Flutter 离线 App）
-> 当前版本：v3（pubspec `0.3.0+3`，2026-10-31 绿构建）。schemaVersion=3，16 张 Drift 表 + 3 张 FTS5 虚表。
-> 架构模式源自"机械精度与几何公差"App（tolerance-tool），内容域全部替换为酿造。
+> 当前版本：v5（pubspec `0.5.0+5`，2026-11-01 绿构建）。schemaVersion=4，17 张 Drift 表 + 3 张 FTS5 虚表；仓库已转 public。
+> 内容取向（2026-11-01 用户定）：**生产实操优先于安全生产**——新增内容以操作判断、现场处置为主，安全类降后进自扩展池。
+> 架构模式源自"机械精度与几何公差"App，内容域全部替换为酿造。
 > 本文档假设你已会 Dart/Flutter，重点是"这个项目有什么约定、坑在哪、数据怎么改"。
 
 ---
@@ -91,15 +92,22 @@ tool/clean_artifacts.py      # 清 artifact 配额（keep=N）
 
 ## 6. 数据库与数据文件
 
-### 6.1 Drift 表（schemaVersion=3）
+### 6.1 Drift 表（schemaVersion=4）
 
 **种子表**（导入器清空重灌）：SopProcedures / ProcessParams / FaultDiagnosis / CalcFormulas / GlossaryTerms / SafetyRules / DailyFacts / SeedMeta。
 
-**用户表**（导入器保护）：AppSettings（另有保存恢复逻辑）/ ReadingProgress / Bookmarks / SearchHistory / Favorites / DailyHistory / ChapterReadMarks / GlossaryProgress。
+**用户表**（导入器保护）：AppSettings（另有保存恢复逻辑）/ ReadingProgress / Bookmarks / SearchHistory / Favorites / DailyHistory / ChapterReadMarks / GlossaryProgress / ChapterLearningProgress。
 
 **FTS5 虚表**（SQL 手建）：sop_fts(title, body, keywords) / fault_fts(symptom, cause, steps, keywords) / glossary_fts(en, zh, definition)，均 trigram。
 
-**改库三件套**（一条不许少）：表类 → schemaVersion+1 → AppDatabase migration（迁移链：v2 建 dailyFacts/dailyHistory，v3 建 chapterReadMarks/glossaryProgress）；用户表加进 userTables 跳过集合；同时补 migration 测试。
+**改库三件套**（一条不许少）：表类 → schemaVersion+1 → AppDatabase migration（迁移链：v2 每日知识 → v3 已读/背诵 → v4 章节学习）；用户表加进 userTables 跳过集合；同时补 migration 测试。
+
+### 6.1.2 章节学习卡（v4 新增）
+
+- 数据链：assets/data/book_learning.json（14 个实操内容章，42 题）→ BookLearningService.load() → 阅读页"本章速览"卡 + "测 3 题"弹窗。
+- 判定口径：quiz **3 题全对 → status 2（掌握）**，否则 1（看过）；学习行为 touchStudyStreak 计入连续天数。
+- 出题红线：quiz 答案必须能从该章原文找到依据（validate 脚本校验 quiz 结构、answer 越界、缺 explanation、summary<3、chapter_key 不在 manifest）。
+- markChapterLearning 用 insertOnConflictUpdate 是安全的（主键 chapterKey 已提供，不属坑 13 场景）；坑 13 只针对 uniqueKeys 约束。
 
 ### 6.1.1 每日知识点与学习统计（v2/v3）
 
