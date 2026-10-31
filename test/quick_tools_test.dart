@@ -236,11 +236,11 @@ void main() {
   });
 
   group('糖浆稀释（质量浓度）', () {
-    test('100 kg 50% 稀到 10%：加水 2400 kg', () {
-      // 100 × (50/10 − 1) = 2400
+    test('100 kg 50% 稀到 10%：加水 400 kg（1:5 稀释）', () {
+      // 100 × (50/10 − 1) = 100 × 4 = 400
       expect(
         QuickTools.diluteWaterKg(stockKg: 100, stockPct: 50, targetPct: 10),
-        closeTo(2400, 0.01),
+        closeTo(400, 0.01),
       );
     });
 
