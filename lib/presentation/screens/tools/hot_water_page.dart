@@ -24,6 +24,23 @@ class _HotWaterPageState extends State<HotWaterPage> {
   final _hotC = TextEditingController(text: '95');
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [
+      _grainTemp,
+      _ratio,
+      _targetMash,
+      _grainKg,
+      _waterL,
+      _currentC,
+      _raiseTo,
+      _hotC
+    ]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
   void dispose() {
     for (final c in [
       _grainTemp,
@@ -103,6 +120,15 @@ class _HotWaterPageState extends State<HotWaterPage> {
           CalcField(_grainTemp, '麦芽温度（°C）', '如 20（车间温度，冬天更低）'),
           CalcField(_ratio, '水粮比（L/kg）', '如 3.0（以工艺卡为准）'),
           CalcField(_targetMash, '目标醅温（°C）', '如 66'),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
           const SizedBox(height: 8),
           CalcResult(
             rows: _strikeResult(),
@@ -119,6 +145,15 @@ class _HotWaterPageState extends State<HotWaterPage> {
           CalcField(_currentC, '当前醅温（°C）', '如 60'),
           CalcField(_raiseTo, '目标醅温（°C）', '如 66'),
           CalcField(_hotC, '热水温度（°C）', '如 95'),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
           const SizedBox(height: 8),
           CalcResult(
             rows: _raiseResult(),

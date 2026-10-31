@@ -145,6 +145,45 @@ void main() {
     });
   });
 
+  group('水离子（盐添加贡献）', () {
+    test('5g 氯化钙 100L：Ca=13.63、Cl=24.12 ppm', () {
+      // Ca: 5 × 0.2726 × 1000 / 100 = 13.63
+      // Cl: 5 × 0.4823 × 1000 / 100 = 24.115
+      expect(
+        QuickTools.ionPpm(grams: 5, liters: 100, fraction: 0.2726),
+        closeTo(13.63, 0.01),
+      );
+      expect(
+        QuickTools.ionPpm(grams: 5, liters: 100, fraction: 0.4823),
+        closeTo(24.12, 0.01),
+      );
+    });
+
+    test('反算：目标 Ca 50ppm @100L 氯化钙 → 18.34 g', () {
+      // grams = 50 × 100 / (0.2726 × 1000) = 18.3419
+      expect(
+        QuickTools.ionGrams(ppm: 50, liters: 100, fraction: 0.2726),
+        closeTo(18.34, 0.01),
+      );
+    });
+  });
+
+  group('麦芽蛋白质', () {
+    test('总氮 1.55% → 蛋白质干基 9.69%', () {
+      // 1.55 × 6.25 = 9.6875
+      expect(QuickTools.proteinFromNitrogen(1.55), closeTo(9.69, 0.01));
+    });
+
+    test('干基 → 风干基（水分 5%）', () {
+      // 9.6875 × 0.95 = 9.2031
+      expect(QuickTools.proteinDryToAsIs(9.6875, 5), closeTo(9.20, 0.01));
+    });
+
+    test('风干基 → 干基（水分 5%）：10 ÷ 0.95 = 10.5263', () {
+      expect(QuickTools.proteinAsIsToDry(10.0, 5), closeTo(10.53, 0.01));
+    });
+  });
+
   group('CO2 亨利定律', () {
     test('4°C 0.8 bar 表压 ≈ 2.51 vol', () {
       // k_H(4°C) = 0.034×exp(2400×(1/277.15-1/298.15)) = 0.034×1.84009 = 0.062563

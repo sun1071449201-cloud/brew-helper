@@ -157,6 +157,45 @@ class QuickTools {
     return (targetC - currentC) * (0.2 * grainKg + waterL) / denom;
   }
 
+  // ---------- 酿造水离子（盐添加贡献） ----------
+
+  /// 离子浓度贡献（ppm = mg/L）：
+  /// ppm = 盐克数 × 该离子质量分数 × 1000 / 水量升数。
+  /// 质量分数由摩尔质量直接算出（定义换算，非经验值）。
+  static double ionPpm({
+    required double grams,
+    required double liters,
+    required double fraction,
+  }) {
+    if (liters <= 0) return 0;
+    return grams * fraction * 1000 / liters;
+  }
+
+  /// 反算：要达到目标 ppm 需要投的盐克数。
+  static double ionGrams({
+    required double ppm,
+    required double liters,
+    required double fraction,
+  }) {
+    if (fraction <= 0) return 0;
+    return ppm * liters / (fraction * 1000);
+  }
+
+  // ---------- 麦芽蛋白质 ----------
+
+  /// 蛋白质%（干基）= 总氮% × 6.25（谷物通用 Jones 换算系数）。
+  static double proteinFromNitrogen(double nitrogenPct) => nitrogenPct * 6.25;
+
+  /// 干基 → 风干基（as-is）：乘 (1 − 水分%)。
+  static double proteinDryToAsIs(double proteinDryPct, double moisturePct) =>
+      proteinDryPct * (1 - moisturePct / 100);
+
+  /// 风干基 → 干基：除以 (1 − 水分%)。
+  static double proteinAsIsToDry(double proteinAsIsPct, double moisturePct) {
+    final f = 1 - moisturePct / 100;
+    return f <= 0 ? 0 : proteinAsIsPct / f;
+  }
+
   // ---------- CO2 含量对照（亨利定律） ----------
 
   /// CO2 在啤酒（近似水）中的亨利常数（mol/(L·atm)），Sander 2015 关联式：

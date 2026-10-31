@@ -16,6 +16,15 @@ class _AbvPageState extends State<AbvPage> {
   final _fg = TextEditingController(text: '1.010');
 
   @override
+  void initState() {
+    super.initState();
+    // 输入即重算（结果卡在 build 里求值，监听触发 setState 即可）。
+    for (final c in [_og, _fg]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
   void dispose() {
     _og.dispose();
     _fg.dispose();
@@ -49,7 +58,16 @@ class _AbvPageState extends State<AbvPage> {
         children: [
           CalcField(_og, '原麦汁浓度 OG（比重）', '如 1.048'),
           CalcField(_fg, '最终比重 FG（比重）', '如 1.010'),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
+          const SizedBox(height: 4),
           if (result == null)
             Card(
               child: Padding(

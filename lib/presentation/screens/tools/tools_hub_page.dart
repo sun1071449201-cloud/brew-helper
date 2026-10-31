@@ -11,6 +11,8 @@ import 'hot_water_page.dart';
 import 'ibu_page.dart';
 import 'sugar_priming_page.dart';
 import 'sg_convert_page.dart';
+import 'malt_protein_page.dart';
+import 'water_ions_page.dart';
 import 'unit_convert_page.dart';
 
 /// 工具条目。
@@ -41,6 +43,8 @@ class _ToolsHubPageState extends ConsumerState<ToolsHubPage> {
     _Tool('ibu', '酒花苦度 IBU', 'Tinseth 法', Icons.grass, _mkIbu),
     _Tool('sugar', '补糖计算', '碳酸化目标 → 加糖克数', Icons.water_drop, _mkSugar),
     _Tool('cleaner', '清洗剂配比', '碱液/酸液投加与稀释', Icons.sanitizer, _mkCleaner),
+    _Tool('waterions', '水离子计算', '酿造盐投加 ↔ 钙镁钠氯硫', Icons.water, _mkWaterIons),
+    _Tool('protein', '麦芽蛋白换算', '总氮 ↔ 蛋白质（干/风干基）', Icons.egg, _mkProtein),
     _Tool('unit', '单位换算', 'ppm ↔ mg/L ↔ %', Icons.swap_horiz, _mkUnit),
   ];
 
@@ -56,6 +60,8 @@ class _ToolsHubPageState extends ConsumerState<ToolsHubPage> {
     '酒花苦度 IBU': ['AA%、酒花克数、煮沸升数、SG、分钟', 'IBU（Tinseth 法）', '是估算不是实测；老酒花 AA 会衰减'],
     '补糖计算': ['目标体积数、残余体积数、酒量、糖种', '加糖克数', '按化学计量推导；实际以本厂碳酸化工艺卡为准'],
     '清洗剂配比': ['目标浓度% × 配液量（或原液浓度）', '投加 kg / 原液升数', '碱液有放热与腐蚀，先加水后加碱，穿戴防护'],
+    '水离子计算': ['盐种 + 克数 + 水量（或目标 ppm）', '各离子贡献 ppm / 需盐克数', '按纯盐化学计量；工业盐纯度打折，调水先看原水化验单'],
+    '麦芽蛋白换算': ['总氮% 或蛋白质%、水分%', '蛋白质干基/风干基互换、总氮折算', '6.25 为谷物通用系数；判级以本厂化验标准为准'],
     '单位换算': ['数值 + 单位', 'ppm / mg/L / % 三向换算', '稀溶液近似 1 ppm = 1 mg/L；浓浆需按密度修正'],
     '热水用量': ['粮温、水粮比、目标醅温', '投料水温 / 升温补水量', '0.2 比热为经验常数；桶体吸热未计入'],
     'CO2 含量对照': ['酒温 + 表压（或目标体积数）', '饱和 CO2 体积数 / 所需压力', '亨利定律按水近似；酒精含量会略降溶解度'],
@@ -66,6 +72,8 @@ class _ToolsHubPageState extends ConsumerState<ToolsHubPage> {
   static Widget _mkIbu(_) => const IbuPage();
   static Widget _mkSugar(_) => const SugarPrimingPage();
   static Widget _mkCleaner(_) => const CleanerMixPage();
+  static Widget _mkWaterIons(_) => const WaterIonsPage();
+  static Widget _mkProtein(_) => const MaltProteinPage();
   static Widget _mkUnit(_) => const UnitConvertPage();
   static Widget _mkHot(_) => const HotWaterPage();
   static Widget _mkCo2(_) => const Co2Page();

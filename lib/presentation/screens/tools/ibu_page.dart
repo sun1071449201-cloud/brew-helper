@@ -19,6 +19,14 @@ class _IbuPageState extends State<IbuPage> {
   final _minutes = TextEditingController(text: '60');
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [_aa, _grams, _liters, _sg, _minutes]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
   void dispose() {
     for (final c in [_aa, _grams, _liters, _sg, _minutes]) {
       c.dispose();
@@ -65,7 +73,16 @@ class _IbuPageState extends State<IbuPage> {
           CalcField(_liters, '煮沸麦汁量（L）', '如 100'),
           CalcField(_sg, '煮沸时麦汁比重 SG', '如 1.050'),
           CalcField(_minutes, '煮沸时间（分钟）', '如 60'),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
+          const SizedBox(height: 4),
           if (result != null)
             CalcResult(
               rows: result,

@@ -18,6 +18,14 @@ class _SugarPrimingPageState extends State<SugarPrimingPage> {
   SugarKind _kind = SugarKind.sucrose;
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [_target, _residual, _liters]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
   void dispose() {
     for (final c in [_target, _residual, _liters]) {
       c.dispose();
@@ -83,7 +91,16 @@ class _SugarPrimingPageState extends State<SugarPrimingPage> {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
+          const SizedBox(height: 4),
           if (result == null)
             Card(
               child: Padding(

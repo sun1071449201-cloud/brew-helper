@@ -17,6 +17,14 @@ class _Co2PageState extends State<Co2Page> {
   final _target = TextEditingController(text: '2.5');
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [_temp, _pressure, _target]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
   void dispose() {
     for (final c in [_temp, _pressure, _target]) {
       c.dispose();
@@ -58,6 +66,15 @@ class _Co2PageState extends State<Co2Page> {
         children: [
           CalcField(_temp, '酒温（°C）', '如 4（背压/碳酸化时的酒液温度）'),
           CalcField(_pressure, '罐内表压（bar）', '如 0.8（压力表读数）'),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
           const SizedBox(height: 8),
           if (forward != null)
             CalcResult(

@@ -17,6 +17,14 @@ class _CleanerMixPageState extends State<CleanerMixPage> {
   final _stockPct = TextEditingController(text: '50');
 
   @override
+  void initState() {
+    super.initState();
+    for (final c in [_targetPct, _finalLiters, _stockPct]) {
+      c.addListener(() => setState(() {}));
+    }
+  }
+
+  @override
   void dispose() {
     for (final c in [_targetPct, _finalLiters, _stockPct]) {
       c.dispose();
@@ -53,7 +61,16 @@ class _CleanerMixPageState extends State<CleanerMixPage> {
           CalcField(_targetPct, '目标浓度（%）', '如 2（碱洗常用范围，以工艺卡为准）'),
           CalcField(_finalLiters, '配液总量（L）', '如 100（罐容积 − 管路损耗自行评估）'),
           CalcField(_stockPct, '原液浓度（%，用原液时填）', '如 50（液碱标签浓度）'),
-          const SizedBox(height: 8),
+          const SizedBox(height: 4),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => setState(() {}),
+              icon: const Icon(Icons.calculate, size: 18),
+              label: const Text('计算'),
+            ),
+          ),
+          const SizedBox(height: 4),
           if (result != null)
             CalcResult(
               rows: result,
