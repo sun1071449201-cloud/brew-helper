@@ -6,6 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/models/book_models.dart';
+import '../../domain/models/chapter_learning.dart';
 import '../state/providers.dart';
 import '../widgets/reader_markdown.dart';
 import '../widgets/states.dart';
@@ -232,6 +233,193 @@ class _ReadingViewState extends ConsumerState<_ReadingView> {
     ref.invalidate(lastReadInfoProvider);
   }
 
+  // ---------- 本章学习卡（M1：速览 + 3 题自测） ----------
+
+  Widget _statusChip(int status) {
+    final label = status == 2 ? '已掌握' : (status == 1 ? '看过' : '未学');
+    final color = status == 2
+        ? Colors.green.shade700
+        : (status == 1 ? Colors.blue.shade700 : Colors.grey);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: color.withOpacity(0.4)),
+      ),
+      child: Text(label,
+          style: TextStyle(
+              fontSize: 10.5, color: color, fontWeight: FontWeight.bold)),
+    );
+  }
+
+  Widget _learningCard(
+      BuildContext context, ChapterLearning learning, int status) {
+    final scheme = Theme.of(context).colorScheme;
+    return Card(
+      margin: const EdgeInsets.only(bottom: 10),
+      color: scheme.primaryContainer.withOpacity(0.28),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.school_outlined, size: 18),
+                const SizedBox(width: 6),
+                const Text('本章速览',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(width: 8),
+                _statusChip(status),
+                const Spacer(),
+                if (learning.quiz.isNotEmpty)
+                  TextButton.icon(
+                    onPressed: () => _openQuiz(learning),
+                    icon: const Icon(Icons.quiz_outlined, size: 16),
+                    label: Text(
+                        status == 2
+                            ? '重测 ${learning.quiz.length} 题'
+                            : '测 ${learning.quiz.length} 题',
+                        style: const TextStyle(fontSize: 12)),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            for (final s in learning.summary)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 3),
+                child: Text('• $s',
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(height: 1.45)),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 章末自测：3 题全对 → 掌握(2)，否则看过(1)。判定口径与参考项目一致。
+  Future<void> _openQuiz(ChapterLearning learning) async {
+    final answers = List<int?>.filled(learning.quiz.length, null);
+    var submitted = false;
+    var score = 0;
+    final result = await showDialog<int>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AlertDialog(
+          title: Text('本章自测（${learning.quiz.length} 题）'),
+          content: SizedBox(
+            width: 480,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  for (var i = 0; i < learning.quiz.length; i++) ...[
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 6, bottom: 2),
+                        child: Text(
+                          '${i + 1}. ${learning.quiz[i].question}',
+                          style:
+                              const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                    for (var j = 0; j < learning.quiz[i].options.length; j++)
+                      RadioListTile<int>(
+                        dense: true,
+                        contentPadding: EdgeInsets.zero,
+                        title: Text(learning.quiz[i].options[j],
+                            style: const TextStyle(fontSize: 13)),
+                        value: j,
+                        groupValue: answers[i],
+                        onChanged: submitted
+                            ? null
+                            : (v) => setLocal(() => answers[i] = v),
+                      ),
+                    if (submitted)
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: Text(
+                            answers[i] == learning.quiz[i].answer
+                                ? '✓ 正确：${learning.quiz[i].explanation}'
+                                : '✗ 正确答案：${learning.quiz[i].options[learning.quiz[i].answer]}。${learning.quiz[i].explanation}',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: answers[i] == learning.quiz[i].answer
+                                  ? Colors.green.shade700
+                                  : Colors.red.shade700,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                  if (submitted)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                          '得分：$score / ${learning.quiz.length}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15)),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.pop(ctx),
+                child: const Text('关闭')),
+            if (!submitted)
+              FilledButton(
+                onPressed: answers.every((a) => a != null)
+                    ? () {
+                        var s = 0;
+                        for (var i = 0; i < learning.quiz.length; i++) {
+                          if (answers[i] == learning.quiz[i].answer) s++;
+                        }
+                        setLocal(() {
+                          score = s;
+                          submitted = true;
+                        });
+                      }
+                    : null,
+                child: const Text('交卷'),
+              )
+            else
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, score),
+                child: const Text('完成'),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    final passed = result >= learning.quiz.length;
+    await ref.read(userDataRepositoryProvider).markChapterLearning(
+          widget.content.chapterKey,
+          passed ? 2 : 1,
+          score: result,
+        );
+    await touchStudyStreak(ref);
+    ref.invalidate(chapterLearningProvider);
+    ref.invalidate(studiedTodayProvider);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(passed
+          ? '自测通过：$result/${learning.quiz.length}，本章已标记"掌握"'
+          : '得分：$result/${learning.quiz.length}，再回看一遍本章'),
+    ));
+  }
+
   @override
   void dispose() {
     _saveDebounce?.cancel();
@@ -379,6 +567,10 @@ class _ReadingViewState extends ConsumerState<_ReadingView> {
     final content = widget.content;
     final bookmarksAsync =
         ref.watch(bookmarksForChapterProvider(content.chapterKey));
+    final learning =
+        ref.watch(bookLearningProvider).valueOrNull?[content.chapterKey];
+    final status =
+        ref.watch(chapterLearningProvider).valueOrNull?[content.chapterKey] ?? 0;
 
     // 锚点/书签跳转定位：所有入口先做范围检查，找不到就明确告诉用户。
     final requestedAnchor = widget.anchor?.trim();
@@ -469,6 +661,8 @@ class _ReadingViewState extends ConsumerState<_ReadingView> {
                 label: const Text('本章目录'),
               ),
             ),
+            // 本章学习卡：速览 + 状态 + 章末自测入口（有卡的章节才显示）。
+            if (learning != null) _learningCard(context, learning, status),
             // 划词搜索：长按选中文字 → 上下文菜单「查术语 / 复制」
             SelectionArea(
               contextMenuBuilder: (context, selectableRegion) =>

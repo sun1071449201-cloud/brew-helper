@@ -3,10 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:brew_helper/data/database/app_database.dart';
 
 void main() {
-  test('schema v3：16 张表 + 3 个 FTS 虚表齐全', () async {
+  test('schema v4：17 张表 + 3 个 FTS 虚表齐全', () async {
     final db = AppDatabase.forTesting(NativeDatabase.memory());
     await db.customSelect('SELECT 1').get();
-    expect(db.schemaVersion, 3);
+    expect(db.schemaVersion, 4);
 
     final tables = await db
         .customSelect("SELECT name FROM sqlite_master WHERE type='table'")
@@ -37,6 +37,7 @@ void main() {
       'daily_history',
       'chapter_read_marks',
       'glossary_progress',
+      'chapter_learning_progress',
     ]) {
       expect(names, contains(t));
     }

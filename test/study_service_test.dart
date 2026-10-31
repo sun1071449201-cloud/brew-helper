@@ -74,6 +74,19 @@ void main() {
     expect(marks['ferm_sop.ch01'], isFalse);
   });
 
+  test('章节学习状态：全对掌握 / 否则看过', () async {
+    await userRepo.markChapterLearning('ferm_sop.ch01', 2, score: 3);
+    await userRepo.markChapterLearning('ferm_sop.ch02', 1, score: 1);
+    var map = await userRepo.chapterLearningMap();
+    expect(map['ferm_sop.ch01'], 2);
+    expect(map['ferm_sop.ch02'], 1);
+    // 重复标记同章 = 更新（主键冲突目标，幂等）
+    await userRepo.markChapterLearning('ferm_sop.ch01', 1, score: 2);
+    map = await userRepo.chapterLearningMap();
+    expect(map['ferm_sop.ch01'], 1);
+    expect(map.length, 2);
+  });
+
   test('术语背诵：已背/还不熟/间隔复习到期', () async {
     final now = DateTime(2026, 10, 31, 9, 0);
     await userRepo.markGlossaryTerm(termId: 't041', known: true, now: now);

@@ -11,12 +11,12 @@ import 'tables/user_data_tables.dart';
 
 part 'app_database.g.dart';
 
-/// 三组数据模型（16 张表）：
+/// 三组数据模型（17 张表）：
 /// 种子表（导入器覆盖）：SopProcedures / ProcessParams / FaultDiagnosis /
 ///   CalcFormulas / GlossaryTerms / SafetyRules / DailyFacts / SeedMeta
 /// 用户表（导入器跳过）：AppSettings（另有保存恢复逻辑） /
 ///   ReadingProgress / Bookmarks / SearchHistory / Favorites /
-///   DailyHistory / ChapterReadMarks / GlossaryProgress
+///   DailyHistory / ChapterReadMarks / GlossaryProgress / ChapterLearningProgress
 /// FTS5 虚表（SQL 手建，随种子重建）：sop_fts / fault_fts / glossary_fts
 @DriftDatabase(tables: [
   SopProcedures,
@@ -35,6 +35,7 @@ part 'app_database.g.dart';
   DailyHistory,
   ChapterReadMarks,
   GlossaryProgress,
+  ChapterLearningProgress,
 ])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
@@ -42,7 +43,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   // ---------- FTS5 全文索引（trigram 分词支持中文子串匹配） ----------
 
@@ -108,6 +109,10 @@ class AppDatabase extends _$AppDatabase {
             // v3：章节已读标记 + 术语背诵进度（学习统计的数据底座）。
             await m.createTable(chapterReadMarks);
             await m.createTable(glossaryProgress);
+          }
+          if (from < 4) {
+            // v4：章节学习状态（学习卡 quiz 的数据底座）。
+            await m.createTable(chapterLearningProgress);
           }
         },
       );

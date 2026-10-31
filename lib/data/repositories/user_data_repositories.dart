@@ -195,6 +195,27 @@ class DriftUserDataRepository {
         );
   }
 
+  // ---------- 章节学习状态（学习卡 quiz） ----------
+
+  /// 标记章节学习状态：2=掌握（quiz 全对），1=看过。
+  /// ChapterLearningProgress 主键就是 chapterKey 且已提供，
+  /// insertOnConflictUpdate 的冲突目标恰好覆盖（不属 README 坑 13 场景）。
+  Future<void> markChapterLearning(String chapterKey, int status,
+      {int? score}) async {
+    await _db.into(_db.chapterLearningProgress).insertOnConflictUpdate(
+          ChapterLearningProgressCompanion.insert(
+            chapterKey: chapterKey,
+            status: Value(status),
+            bestScore: Value(score ?? 0),
+          ),
+        );
+  }
+
+  Future<Map<String, int>> chapterLearningMap() async {
+    final rows = await _db.select(_db.chapterLearningProgress).get();
+    return {for (final r in rows) r.chapterKey: r.status};
+  }
+
   // ---------- 术语背诵进度（间隔复习） ----------
 
   Future<Map<String, int>> glossaryProgressMap() async {

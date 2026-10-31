@@ -6,7 +6,9 @@ import '../../data/repositories/book_repositories.dart';
 import '../../data/repositories/brew_repositories.dart';
 import '../../data/repositories/user_data_repositories.dart';
 import '../../domain/models/book_models.dart';
+import '../../domain/models/chapter_learning.dart';
 import '../../domain/ports/book_repository.dart';
+import '../../domain/services/book_learning_service.dart';
 import '../../domain/services/daily_service.dart';
 import '../../domain/services/study_service.dart';
 
@@ -83,6 +85,15 @@ final dailyCandidatesProvider = FutureProvider<List<DailyFact>>((ref) {
 final dailyTipIndexProvider = StateProvider<int>((ref) => 0);
 
 // ---------- 学习统计（v3） ----------
+
+/// 章节学习卡（assets/data/book_learning.json）：chapterKey → 卡片。
+final bookLearningProvider = FutureProvider<Map<String, ChapterLearning>>(
+    (ref) => BookLearningService.load());
+
+/// 章节学习状态：chapterKey → 0 未学 / 1 看过 / 2 掌握。
+final chapterLearningProvider = FutureProvider<Map<String, int>>((ref) {
+  return ref.watch(userDataRepositoryProvider).chapterLearningMap();
+});
 
 /// 章节已读标记映射（chapterKey → 是否已读）。
 final readMarksProvider = FutureProvider<Map<String, bool>>((ref) {

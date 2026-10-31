@@ -46,7 +46,7 @@ class SeedImporter {
     final savedSettings = await (_db.select(_db.appSettings)).get();
 
     await _db.transaction(() async {
-      // 用户数据表不随种子导入清库（书签/进度/收藏/搜索历史/每日知识/已读/背诵保留）。
+      // 用户数据表不随种子导入清库（书签/进度/收藏/搜索历史/每日知识/已读/背诵/章节学习保留）。
       const userTables = {
         'reading_progress',
         'bookmarks',
@@ -55,6 +55,7 @@ class SeedImporter {
         'daily_history',
         'chapter_read_marks',
         'glossary_progress',
+        'chapter_learning_progress',
       };
       for (final table in _db.allTables) {
         if (userTables.contains(table.actualTableName)) continue;

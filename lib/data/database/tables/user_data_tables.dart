@@ -82,3 +82,15 @@ class GlossaryProgress extends Table {
   @override
   Set<Column> get primaryKey => {termId};
 }
+
+/// 章节学习状态（用户数据）：0 未学 / 1 看过 / 2 掌握；
+/// bestScore 为自测最好成绩（满分 = quiz 题数）。
+class ChapterLearningProgress extends Table {
+  TextColumn get chapterKey => text()();
+  IntColumn get status => integer().withDefault(const Constant(0))();
+  IntColumn get bestScore => integer().withDefault(const Constant(0))();
+  DateTimeColumn get updatedAt => dateTime().withDefault(currentDateAndTime)();
+
+  @override
+  Set<Column> get primaryKey => {chapterKey};
+}

@@ -114,6 +114,38 @@ def main() -> int:
                 if not row.get("source_ref"):
                     fail("%s row %d missing source_ref" % (fname, i))
 
+    # ---------- book_learning（章节学习卡） ----------
+    bl_path = DATA_DIR / "book_learning.json"
+    if bl_path.exists():
+        try:
+            bl = json.loads(bl_path.read_text(encoding="utf-8"))
+            chapters = bl.get("chapters", [])
+            print("book_learning: %d chapters, %d quiz items" %
+                  (len(chapters), sum(len(c.get("quiz", [])) for c in chapters)))
+            if len(chapters) < 3:
+                fail("book_learning.json: expected >= 3 chapters, got %d" % len(chapters))
+            # 章节键必须存在于 manifest
+            valid_keys = set(seen_keys)
+            for c in chapters:
+                if c.get("chapter_key") not in valid_keys:
+                    fail("book_learning unknown chapter_key: %s" % c.get("chapter_key"))
+                if len(c.get("summary", [])) < 3:
+                    fail("book_learning %s: summary < 3" % c.get("chapter_key"))
+                quiz = c.get("quiz", [])
+                if len(quiz) < 3:
+                    fail("book_learning %s: quiz < 3 questions" % c.get("chapter_key"))
+                for qi, q in enumerate(quiz):
+                    opts = q.get("options", [])
+                    if len(opts) < 2:
+                        fail("book_learning %s quiz %d: < 2 options" % (c.get("chapter_key"), qi))
+                    ans = q.get("answer")
+                    if not isinstance(ans, int) or ans < 0 or ans >= len(opts):
+                        fail("book_learning %s quiz %d: answer out of range" % (c.get("chapter_key"), qi))
+                    if not q.get("explanation"):
+                        fail("book_learning %s quiz %d: missing explanation" % (c.get("chapter_key"), qi))
+        except Exception as exc:
+            fail("book_learning.json invalid: %s" % exc)
+
     if errors:
         print("CONTENT CHECK FAILED:")
         for e in errors:
