@@ -97,8 +97,8 @@ def main() -> int:
             fail("fault_diagnosis.json: expected >= 16 entries, got %d" % len(rows))
         if fname == "calc_formulas.json" and len(rows) < 8:
             fail("calc_formulas.json: expected >= 8 entries, got %d" % len(rows))
-        if fname == "daily_facts.json" and len(rows) < 60:
-            fail("daily_facts.json: expected >= 60 entries, got %d" % len(rows))
+        if fname == "daily_facts.json" and len(rows) < 120:
+            fail("daily_facts.json: expected >= 120 entries, got %d" % len(rows))
         if fname == "safety_rules.json" and len(rows) < 8:
             fail("safety_rules.json: expected >= 8 entries, got %d" % len(rows))
         for i, row in enumerate(rows):
